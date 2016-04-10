@@ -1,0 +1,7 @@
+/steamlink/
+*.o
+steamlink-qml-example
+moc_*
+Makefile
+*.pro.user
+
