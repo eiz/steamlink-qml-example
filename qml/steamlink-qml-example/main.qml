@@ -8,7 +8,7 @@ import org.e7m.steamlink 1.0
 Rectangle {
     id: page
     width: 320; height: 480
-    color: "lightgray"
+    color: "white"
 
     Text {
         id: helloText
@@ -34,6 +34,36 @@ Rectangle {
         font.pointSize: 24; font.bold: true
     }
 
+    ListView {
+        id: sidebar
+        anchors.top: helloText.bottom
+        anchors.topMargin: 30
+        anchors.bottom: page.bottom
+        anchors.left: page.left
+        anchors.leftMargin: 10
+        width: page.width / 5 - 20
+
+        model: ListModel {
+            ListElement {
+                name: "Menu 1"
+                source: "Menu1.qml"
+            }
+
+            ListElement {
+                name: "Menu 2"
+                source: "Menu2.qml"
+            }
+
+            ListElement {
+                name: "Menu 3"
+                source: "Menu3.qml"
+            }
+        }
+        delegate: Row {
+            Text { text: name; font.pointSize: 18 }
+        }
+    }
+
     Grid {
         id: colorPicker
         x: 4;
@@ -44,13 +74,21 @@ Rectangle {
         anchors.bottomMargin: 4
         anchors.right: page.right
         anchors.left: page.left
+        anchors.leftMargin: page.width / 5
         rows: 2; columns: 3;
-        focus: true
 
-        Cell { cellColor: "red" }
-        Cell { cellColor: "green" }
+        Cell {
+            id: cellR; cellColor: "red"; focus: true
+            Controller.onButtonBPressed: {
+                cellG.focus = true;
+                cellG.Controller.onButtonBPressed.connect(function(e) {
+                    cellY.focus = true;
+                });
+            }
+        }
+        Cell { id: cellG; cellColor: "green" }
         Cell { cellColor: "blue" }
-        Cell { cellColor: "yellow" }
+        Cell { id: cellY; cellColor: "yellow" }
         Cell { cellColor: "steelblue" }
         Cell { cellColor: "black" }
 

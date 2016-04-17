@@ -14,6 +14,17 @@ Item {
     Rectangle {
         id: rectangle
         border.color: "white"
+        border.width: 4
         anchors.fill: parent
+
+        Behavior on border.color {
+            ColorAnimation { duration: 200 }
+        }
+    }
+
+    states: State {
+        name: "SELECTED"
+        when: (container.focus)
+        PropertyChanges { target: rectangle; border.color: "blue" }
     }
 }
