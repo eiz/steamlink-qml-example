@@ -13,7 +13,7 @@ Item {
 
     Rectangle {
         id: rectangle
-        border.color: "white"
+        border.color: focus ? "blue" : "white"
         border.width: 4
         anchors.fill: parent
 
@@ -22,9 +22,17 @@ Item {
         }
     }
 
-    states: State {
-        name: "SELECTED"
-        when: (container.focus)
-        PropertyChanges { target: rectangle; border.color: "blue" }
-    }
+    states: [
+        State {
+            name: "SELECTED"
+            when: (container.focus)
+            PropertyChanges { target: rectangle; border.color: "blue" }
+        },
+
+        State {
+            name: "NORMAL"
+            when: (!container.focus)
+            PropertyChanges { target: rectangle; border.color: "white" }
+        }
+    ]
 }

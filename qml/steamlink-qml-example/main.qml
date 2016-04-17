@@ -77,33 +77,33 @@ Rectangle {
         anchors.leftMargin: page.width / 5
         rows: 2; columns: 3;
 
-        Cell {
-            id: cellR; cellColor: "red"; focus: true
-            Controller.onButtonBPressed: {
-                cellG.focus = true;
-                cellG.Controller.onButtonBPressed.connect(function(e) {
-                    cellY.focus = true;
-                });
-            }
-        }
+        Cell { id: cellR; cellColor: "red"; focus: true }
         Cell { id: cellG; cellColor: "green" }
-        Cell { cellColor: "blue" }
+        Cell { id: cellB; cellColor: "blue" }
         Cell { id: cellY; cellColor: "yellow" }
-        Cell { cellColor: "steelblue" }
-        Cell { cellColor: "black" }
+        Cell { id: cellSB; cellColor: "steelblue" }
+        Cell { id: cell0; cellColor: "black" }
 
         Controller.onPressed: {
             console.log("Generic handler", event.type)
-            event.accepted = event.type === ControllerEventType.ButtonB
+            switch (event.type) {
+            case ControllerEventType.ButtonA:
+                cellG.focus = true; event.accepted = true;
+                break;
+            case ControllerEventType.ButtonB:
+                cellR.focus = true; event.accepted = true;
+                break;
+            case ControllerEventType.ButtonX:
+                cellB.focus = true; event.accepted = true;
+                break;
+            case ControllerEventType.ButtonY:
+                cellY.focus = true; event.accepted = true;
+                break;
+            }
         }
 
         Controller.onReleased: {
             console.log("Button released")
-        }
-
-        Controller.onButtonAPressed: {
-            console.log("Specific handler auto-accepts like Keys")
-            helloText.text = "[A] button pressed."
         }
 
         Controller.onButtonGuidePressed: Qt.quit()
