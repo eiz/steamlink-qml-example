@@ -27,13 +27,13 @@ void ControllerAttached::initialize()
         "org.e7m.steamlink", 1, 0, "ControllerEvent");
 }
 
-struct SignalName
+struct ControllerSignalName
 {
     const char *name;
     int type;
 };
 
-static const SignalName pressedSignals[] =
+static const ControllerSignalName pressedSignals[] =
 {
     { "buttonAPressed", QControllerEvent::BUTTON_A },
     { "buttonBPressed", QControllerEvent::BUTTON_B },
@@ -49,7 +49,7 @@ static const SignalName pressedSignals[] =
     { 0, 0 }
 };
 
-static const SignalName releasedSignals[] =
+static const ControllerSignalName releasedSignals[] =
 {
     { "buttonAReleased", QControllerEvent::BUTTON_A },
     { "buttonBReleased", QControllerEvent::BUTTON_B },
@@ -65,7 +65,8 @@ static const SignalName releasedSignals[] =
     { 0, 0 }
 };
 
-static const char *signalNameForEventType(const SignalName *names, int type)
+static const char *signalNameForEventType(
+    const ControllerSignalName *names, int type)
 {
     for (int i = 0; names[i].name; ++i) {
         if (names[i].type == type) {
@@ -74,6 +75,32 @@ static const char *signalNameForEventType(const SignalName *names, int type)
     }
 
     return NULL;
+}
+
+void ControllerAttached::sendSpecificEvent(
+    const ControllerSignalName *signalTable,
+    QuickControllerEvent& qcevt,
+    QControllerEvent *cevt)
+{
+    const char *sigName = signalNameForEventType(
+                signalTable, cevt->type());
+
+    if (sigName) {
+        QString sigNameWithType = sigName;
+
+        sigNameWithType.append("(QuickControllerEvent*)");
+        int signalIndex = metaObject()->indexOfSignal(
+            sigNameWithType.toLocal8Bit().constData());
+        QMetaMethod signalMethod = metaObject()->method(signalIndex);
+
+        if (isSignalConnected(signalMethod)) {
+            qcevt.setAccepted(true);
+            signalMethod.invoke(
+                this,
+                Qt::DirectConnection,
+                Q_ARG(QuickControllerEvent*, &qcevt));
+        }
+    }
 }
 
 bool ControllerAttached::eventFilter(QObject *obj, QEvent *evt)
@@ -86,62 +113,32 @@ bool ControllerAttached::eventFilter(QObject *obj, QEvent *evt)
         QuickControllerEvent qcevt(*cevt);
 
         if (cevt->isButtonPress()) {
-            const char *sigName = signalNameForEventType(
-                        pressedSignals, cevt->type());
-
-            if (sigName) {
-                QString sigNameWithType = sigName;
-
-                sigNameWithType.append("(QuickControllerEvent*)");
-                int signalIndex = metaObject()->indexOfSignal(
-                    sigNameWithType.toLocal8Bit().constData());
-                QMetaMethod signalMethod = metaObject()->method(signalIndex);
-
-                if (isSignalConnected(signalMethod)) {
-                    qcevt.setAccepted(true);
-                    signalMethod.invoke(
-                        this,
-                        Qt::DirectConnection,
-                        Q_ARG(QuickControllerEvent*, &qcevt));
-                }
-            }
+            sendSpecificEvent(pressedSignals, qcevt, cevt);
 
             if (!qcevt.isAccepted()) {
                 emit pressed(&qcevt);
             }
 
             evt->setAccepted(qcevt.isAccepted());
+
+            if (qcevt.isAccepted()) {
+                return true;
+            }
         }
 
         if (cevt->isButtonRelease()) {
-            const char *sigName = signalNameForEventType(
-                        releasedSignals, cevt->type());
-
-            if (sigName) {
-                QString sigNameWithType = sigName;
-
-                sigNameWithType.append("(QuickControllerEvent*)");
-                int signalIndex = metaObject()->indexOfSignal(
-                    sigNameWithType.toLocal8Bit().constData());
-                QMetaMethod signalMethod = metaObject()->method(signalIndex);
-
-                if (isSignalConnected(signalMethod)) {
-                    qcevt.setAccepted(true);
-                    signalMethod.invoke(
-                        this,
-                        Qt::DirectConnection,
-                        Q_ARG(QuickControllerEvent*, &qcevt));
-                }
-            }
+            sendSpecificEvent(releasedSignals, qcevt, cevt);
 
             if (!qcevt.isAccepted()) {
                 emit released(&qcevt);
             }
 
             evt->setAccepted(qcevt.isAccepted());
-        }
 
-        return true;
+            if (qcevt.isAccepted()) {
+                return true;
+            }
+        }
     }
 
     return QObject::eventFilter(obj, evt);

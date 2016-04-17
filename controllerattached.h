@@ -10,6 +10,7 @@
 #include <QtQml>
 
 class QuickControllerEvent;
+class ControllerSignalName;
 
 class ControllerAttached : public QObject
 {
@@ -22,6 +23,10 @@ public:
 
 private:
     virtual bool eventFilter(QObject *obj, QEvent *evt);
+    void sendSpecificEvent(
+            const ControllerSignalName *signalTable,
+            QuickControllerEvent& qcevt,
+            QControllerEvent *cevt);
 
 signals:
     void pressed(QuickControllerEvent *event);
