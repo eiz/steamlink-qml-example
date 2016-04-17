@@ -27,29 +27,29 @@
 class CControllerManager : public QObject
 {
 public:
-	CControllerManager( QObject *pParent );
-	virtual ~CControllerManager();
+    CControllerManager( QObject *pParent );
+    virtual ~CControllerManager();
 
 private:
-	virtual bool eventFilter( QObject *pObject, QEvent *pEvent );
-	virtual void timerEvent( QTimerEvent *pEvent );
+    virtual bool eventFilter( QObject *pObject, QEvent *pEvent );
+    virtual void timerEvent( QTimerEvent *pEvent );
 
 private:
-	struct GameController_t;
+    struct GameController_t;
 
-	bool BInitGameControllers();
-	bool BShouldIgnoreController( const char *pszGUID );
-	void CheckGameControllers();
-	void OnGameControllerAdded( int iJoystick );
-	void OnGameControllerRemoved( int nJoystickID );
-	GameController_t *GetGameController( int nJoystickID );
-	bool BIgnoreGameControllerEvent( GameController_t *pController );
-	void OnGameControllerButton( GameController_t *pController, int nButton, bool bPressed );
-	void OnGameControllerAxis( GameController_t *pController, int nAxis, int nValue );
+    bool BInitGameControllers();
+    bool BShouldIgnoreController( const char *pszGUID );
+    void CheckGameControllers();
+    void OnGameControllerAdded( int iJoystick );
+    void OnGameControllerRemoved( int nJoystickID );
+    GameController_t *GetGameController( int nJoystickID );
+    bool BIgnoreGameControllerEvent( GameController_t *pController );
+    void OnGameControllerButton( GameController_t *pController, int nButton, bool bPressed );
+    void OnGameControllerAxis( GameController_t *pController, int nAxis, int nValue );
     void SendGameControllerDPadEvent( GameController_t *pController );
     void SendGameControllerThumbstickEvent( GameController_t *pController, QControllerEvent::EventType eEvent );
     void SendGameControllerTriggerEvent( GameController_t *pController, QControllerEvent::EventType eEvent );
-	void QuitGameControllers();
+    void QuitGameControllers();
 
     void SendControllerButtonEvent( QControllerEvent::EventType eEvent, bool bPressed );
     void SendControllerDPadEvent( bool bUp, bool bDown, bool bLeft, bool bRight );
@@ -58,19 +58,19 @@ private:
     void SendControllerEvent( QEvent *pEvent );
 
 private:
-	bool m_bInitalizedSDL;
-	int m_nUpdateTimerID;
+    bool m_bInitalizedSDL;
+    int m_nUpdateTimerID;
 
-	QVector<GameController_t*> m_vecGameControllers;
+    QVector<GameController_t*> m_vecGameControllers;
 
-	enum EArrowKeys
-	{
-		k_EArrowKeyUp,
-		k_EArrowKeyDown,
-		k_EArrowKeyLeft,
-		k_EArrowKeyRight,
-		k_EArrowKeysMax,
-	};
-	bool m_arrArrowKeyState[ k_EArrowKeysMax ];
+    enum EArrowKeys
+    {
+        k_EArrowKeyUp,
+        k_EArrowKeyDown,
+        k_EArrowKeyLeft,
+        k_EArrowKeyRight,
+        k_EArrowKeysMax,
+    };
+    bool m_arrArrowKeyState[ k_EArrowKeysMax ];
 };
 
