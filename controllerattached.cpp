@@ -65,6 +65,33 @@ static const ControllerSignalName releasedSignals[] =
     { 0, 0 }
 };
 
+static const ControllerSignalName triggerSignals[] =
+{
+    { "leftTrigger", QControllerEvent::TRIGGER_LEFT },
+    { "rightTrigger", QControllerEvent::TRIGGER_RIGHT },
+    { 0, 0 },
+};
+
+static const ControllerSignalName stickSignals[] =
+{
+    { "leftStick", QControllerEvent::THUMBSTICK_LEFT },
+    { "rightStick", QControllerEvent::THUMBSTICK_RIGHT },
+    { 0, 0 },
+};
+
+static const ControllerSignalName dpadPressedSignals[] =
+{
+    { "dpadCenterPressed", QControllerEvent::DIRECTION_CENTER },
+    { "dpadUpPressed", QControllerEvent::DIRECTION_N },
+    { "dpadUpRightPressed", QControllerEvent::DIRECTION_NE },
+    { "dpadRightPressed", QControllerEvent::DIRECTION_E },
+    { "dpadDownRightPressed", QControllerEvent::DIRECTION_SE },
+    { "dpadDownPressed", QControllerEvent::DIRECTION_S },
+    { "dpadDownLeftPressed", QControllerEvent::DIRECTION_SW },
+    { "dpadLeftPressed", QControllerEvent::DIRECTION_W },
+    { "dpadUpLeftPressed", QControllerEvent::DIRECTION_NW },
+};
+
 static const char *signalNameForEventType(
     const ControllerSignalName *names, int type)
 {
@@ -102,6 +129,21 @@ void ControllerAttached::sendSpecificEvent(
     }
 }
 
+#define HANDLE_CONTROLLER_EVENT(genericEvent, table)  \
+    do {                                              \
+        sendSpecificEvent(table, qcevt);    \
+                                                      \
+        if (!qcevt.isAccepted()) {                    \
+            emit genericEvent(&qcevt);                    \
+        }                                             \
+                                                      \
+        evt->setAccepted(qcevt.isAccepted());         \
+                                                      \
+        if (qcevt.isAccepted()) {                     \
+            return true;                              \
+        }                                             \
+    } while(0)
+
 bool ControllerAttached::eventFilter(QObject *obj, QEvent *evt)
 {
     if (evt->type() == QEvent::Controller) {
@@ -112,31 +154,23 @@ bool ControllerAttached::eventFilter(QObject *obj, QEvent *evt)
         QuickControllerEvent qcevt(*cevt);
 
         if (cevt->isButtonPress()) {
-            sendSpecificEvent(pressedSignals, qcevt);
-
-            if (!qcevt.isAccepted()) {
-                emit pressed(&qcevt);
-            }
-
-            evt->setAccepted(qcevt.isAccepted());
-
-            if (qcevt.isAccepted()) {
-                return true;
-            }
+            HANDLE_CONTROLLER_EVENT(pressed, pressedSignals);
         }
 
         if (cevt->isButtonRelease()) {
-            sendSpecificEvent(releasedSignals, qcevt);
+            HANDLE_CONTROLLER_EVENT(released, releasedSignals);
+        }
 
-            if (!qcevt.isAccepted()) {
-                emit released(&qcevt);
-            }
+        if (cevt->isTrigger()) {
+            HANDLE_CONTROLLER_EVENT(trigger, triggerSignals);
+        }
 
-            evt->setAccepted(qcevt.isAccepted());
+        if (cevt->isThumbstick()) {
+            HANDLE_CONTROLLER_EVENT(stick, stickSignals);
+        }
 
-            if (qcevt.isAccepted()) {
-                return true;
-            }
+        if (cevt->isDPad()) {
+            HANDLE_CONTROLLER_EVENT(dpad, dpadPressedSignals);
         }
     }
 

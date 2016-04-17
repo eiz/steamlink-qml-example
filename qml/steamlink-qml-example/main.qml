@@ -18,6 +18,22 @@ Rectangle {
         font.pointSize: 24; font.bold: true
     }
 
+    Text {
+        id: ltText
+        text: "0"
+        y: 30
+        anchors.left: page.left
+        font.pointSize: 24; font.bold: true
+    }
+
+    Text {
+        id: rtText
+        text: "0"
+        y: 30
+        anchors.right: page.right
+        font.pointSize: 24; font.bold: true
+    }
+
     Grid {
         id: colorPicker
         x: 4;
@@ -53,5 +69,29 @@ Rectangle {
         }
 
         Controller.onButtonGuidePressed: Qt.quit()
+
+        Controller.onLeftTrigger: {
+            ltText.text = event.distance.toString()
+        }
+
+        Controller.onRightTrigger: {
+            rtText.text = event.distance.toString()
+        }
+
+        Controller.onDpadLeftPressed: {
+            helloText.text = "Left"
+        }
+
+        Controller.onDpadUpPressed: {
+            helloText.text = "Up"
+        }
+
+        Controller.onDpadRightPressed: {
+            helloText.text = "Right"
+        }
+
+        Controller.onDpadDownPressed: {
+            helloText.text = "Down"
+        }
     }
 }

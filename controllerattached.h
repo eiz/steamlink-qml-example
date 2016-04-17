@@ -32,6 +32,7 @@ signals:
     void released(QuickControllerEvent *event);
     void trigger(QuickControllerEvent *event);
     void stick(QuickControllerEvent *event);
+    void dpad(QuickControllerEvent *event);
 
     void buttonAPressed(QuickControllerEvent *event);
     void buttonBPressed(QuickControllerEvent *event);
@@ -56,6 +57,22 @@ signals:
     void buttonRightStickReleased(QuickControllerEvent *event);
     void buttonLeftShoulderReleased(QuickControllerEvent *event);
     void buttonRightShoulderReleased(QuickControllerEvent *event);
+
+    void leftTrigger(QuickControllerEvent *event);
+    void rightTrigger(QuickControllerEvent *event);
+
+    void leftStick(QuickControllerEvent *event);
+    void rightStick(QuickControllerEvent *event);
+
+    void dpadCenterPressed(QuickControllerEvent *event);
+    void dpadUpPressed(QuickControllerEvent *event);
+    void dpadUpRightPressed(QuickControllerEvent *event);
+    void dpadRightPressed(QuickControllerEvent *event);
+    void dpadDownRightPressed(QuickControllerEvent *event);
+    void dpadDownPressed(QuickControllerEvent *event);
+    void dpadDownLeftPressed(QuickControllerEvent *event);
+    void dpadLeftPressed(QuickControllerEvent *event);
+    void dpadUpLeftPressed(QuickControllerEvent *event);
 };
 
 QML_DECLARE_TYPEINFO(ControllerAttached, QML_HAS_ATTACHED_PROPERTIES)

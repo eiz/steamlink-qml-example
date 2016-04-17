@@ -185,6 +185,9 @@ void CControllerManager::CheckGameControllers()
         case SDL_QUIT:
             QCoreApplication::quit();
             break;
+        default:
+            qWarning() << "Unhandled SDL event " << event.type;
+            break;
         }
     }
 }
@@ -326,6 +329,9 @@ void CControllerManager::OnGameControllerButton( GameController_t *pController, 
     case SDL_CONTROLLER_BUTTON_DPAD_LEFT:
     case SDL_CONTROLLER_BUTTON_DPAD_RIGHT:
         SendGameControllerDPadEvent( pController );
+        break;
+    default:
+        qWarning() << "Unhandled button " << nButton;
         break;
     }
 }
