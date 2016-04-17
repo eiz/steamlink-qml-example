@@ -25,8 +25,7 @@ private:
     virtual bool eventFilter(QObject *obj, QEvent *evt);
     void sendSpecificEvent(
             const ControllerSignalName *signalTable,
-            QuickControllerEvent& qcevt,
-            QControllerEvent *cevt);
+            QuickControllerEvent& qcevt);
 
 signals:
     void pressed(QuickControllerEvent *event);

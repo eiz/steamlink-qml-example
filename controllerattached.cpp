@@ -79,11 +79,10 @@ static const char *signalNameForEventType(
 
 void ControllerAttached::sendSpecificEvent(
     const ControllerSignalName *signalTable,
-    QuickControllerEvent& qcevt,
-    QControllerEvent *cevt)
+    QuickControllerEvent& qcevt)
 {
     const char *sigName = signalNameForEventType(
-                signalTable, cevt->type());
+                signalTable, qcevt.type());
 
     if (sigName) {
         QString sigNameWithType = sigName;
@@ -113,7 +112,7 @@ bool ControllerAttached::eventFilter(QObject *obj, QEvent *evt)
         QuickControllerEvent qcevt(*cevt);
 
         if (cevt->isButtonPress()) {
-            sendSpecificEvent(pressedSignals, qcevt, cevt);
+            sendSpecificEvent(pressedSignals, qcevt);
 
             if (!qcevt.isAccepted()) {
                 emit pressed(&qcevt);
@@ -127,7 +126,7 @@ bool ControllerAttached::eventFilter(QObject *obj, QEvent *evt)
         }
 
         if (cevt->isButtonRelease()) {
-            sendSpecificEvent(releasedSignals, qcevt, cevt);
+            sendSpecificEvent(releasedSignals, qcevt);
 
             if (!qcevt.isAccepted()) {
                 emit released(&qcevt);
