@@ -570,6 +570,9 @@ void CControllerManager::SendControllerEvent( QEvent *pEvent )
     QQuickItem *receiver =
         qobject_cast<QQuickItem *>(QGuiApplication::focusObject());
 
+    // Bubble the event unless explicitly handled.
+    pEvent->setAccepted(false);
+
     while (receiver) {
         if (QGuiApplication::sendEvent(receiver, pEvent) &&
             pEvent->isAccepted() &&
@@ -579,6 +582,14 @@ void CControllerManager::SendControllerEvent( QEvent *pEvent )
         }
 
         receiver = receiver->parentItem();
+    }
+
+    if (!pEvent->isAccepted()) {
+        QWindow *window = QGuiApplication::focusWindow();
+
+        if (window) {
+            QGuiApplication::sendEvent(window, pEvent);
+        }
     }
 }
 

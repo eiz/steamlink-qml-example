@@ -153,9 +153,6 @@ void ControllerAttached::sendSpecificEvent(
 bool ControllerAttached::eventFilter(QObject *obj, QEvent *evt)
 {
     if (evt->type() == QEvent::Controller) {
-        // Bubble the event unless explicitly handled.
-        evt->ignore();
-
         QControllerEvent *cevt = reinterpret_cast<QControllerEvent *>(evt);
         QuickControllerEvent qcevt(*cevt);
 
