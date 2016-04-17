@@ -18,6 +18,12 @@
   3. This notice may not be removed or altered from any source distribution.
 */
 
+/*
+ * Modified for Qt Quick support.
+ * Copyright (c) 2016 Mackenzie Straight. See LICENSE for license details.
+ */
+
+
 #include <QKeyEvent>
 #include <QQuickItem>
 #include <SDL.h>
