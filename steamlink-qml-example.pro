@@ -3,6 +3,7 @@ CONFIG += debug
 
 QMAKE_CXXFLAGS += -Wno-unused-parameter
 QMAKE_LFLAGS += '-Wl,-rpath,\'/home/steam/lib\''
+LIBS += -lSDL2
 
 # Add more folders to ship with the application, here
 folder_01.source = qml/steamlink-qml-example
@@ -13,7 +14,9 @@ DEPLOYMENTFOLDERS = folder_01
 QML_IMPORT_PATH =
 
 # The .cpp file which was generated for your project. Feel free to hack it.
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    controllermanager.cpp \
+    controllerattached.cpp
 
 # Installation path
 # target.path =
@@ -30,3 +33,10 @@ QMAKE_EXTRA_TARGETS += distclean removesteamlink
 # Please do not modify the following two lines. Required for deployment.
 include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
 qtcAddDeployment()
+
+OTHER_FILES += \
+    qml/steamlink-qml-example/Cell.qml
+
+HEADERS += \
+    controllermanager.h \
+    controllerattached.h
