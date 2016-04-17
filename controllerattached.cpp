@@ -82,7 +82,7 @@ void ControllerAttached::sendSpecificEvent(
     QuickControllerEvent& qcevt)
 {
     const char *sigName = signalNameForEventType(
-                signalTable, qcevt.type());
+        signalTable, qcevt.type());
 
     if (sigName) {
         QString sigNameWithType = sigName;
