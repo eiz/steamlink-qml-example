@@ -94,7 +94,7 @@ Rectangle {
 
         Controller.onPressed: {
             console.log("Generic handler", event.type)
-            event.accepted = event.type === 2
+            event.accepted = event.type === ControllerEventType.ButtonB
         }
 
         Controller.onReleased: {
@@ -114,6 +114,10 @@ Rectangle {
 
         Controller.onRightTrigger: {
             rtText.text = event.distance.toString()
+        }
+
+        Controller.onLeftStick: {
+            helloText.text = "A: " + event.angle + " D:" + event.distance
         }
 
         Controller.onDpadLeftPressed: {

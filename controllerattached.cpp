@@ -24,6 +24,12 @@ void ControllerAttached::initialize()
         "Can only be created via attached properties");
     qmlRegisterType<QuickControllerEvent>(
         "org.e7m.steamlink", 1, 0, "ControllerEvent");
+    qmlRegisterUncreatableType<QuickControllerEventDirection>(
+        "org.e7m.steamlink", 1, 0, "ControllerEventDirection",
+        "Only for enum values");
+    qmlRegisterUncreatableType<QuickControllerEventType>(
+        "org.e7m.steamlink", 1, 0, "ControllerEventType",
+        "Only for enum values");
 }
 
 struct ControllerSignalName

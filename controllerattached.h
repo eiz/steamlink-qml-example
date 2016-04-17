@@ -103,4 +103,53 @@ private:
     bool _accepted;
 };
 
+class QuickControllerEventType: public QObject
+{
+    Q_OBJECT
+    Q_ENUMS(EventType)
+public:
+    // Order must match QControllerEvent::EventType
+    enum EventType
+    {
+        None,
+        ButtonA,
+        ButtonB,
+        ButtonX,
+        ButtonY,
+        ButtonBack,
+        ButtonGuide,
+        ButtonStart,
+        ButtonLeftStick,
+        ButtonRightStick,
+        ButtonLeftShoulder,
+        ButtonRightShoulder,
+        DPad,
+        LeftThumbstick,
+        RightThumbstick,
+        LeftTrigger,
+        RightTrigger,
+    };
+};
+
+class QuickControllerEventDirection: public QObject
+{
+    Q_OBJECT
+    Q_ENUMS(Direction)
+
+public:
+    // Order must match QControllerEvent::Direction
+    enum Direction
+    {
+        Center,
+        N,
+        NE,
+        E,
+        SE,
+        S,
+        SW,
+        W,
+        NW,
+    };
+};
+
 #endif // CONTROLLERATTACHED_H
