@@ -24,19 +24,19 @@ Rectangle {
         anchors.top: helloText.bottom
         anchors.topMargin: 30
         anchors.rightMargin: 4
-        anchors.bottom: page.bottom;
+        anchors.bottom: page.bottom
         anchors.bottomMargin: 4
-        anchors.right: page.right;
-        anchors.left: page.left;
+        anchors.right: page.right
+        anchors.left: page.left
         rows: 2; columns: 3;
         focus: true
 
-        Cell { cellColor: "red"; }
-        Cell { cellColor: "green"; }
-        Cell { cellColor: "blue"; }
-        Cell { cellColor: "yellow"; }
-        Cell { cellColor: "steelblue"; }
-        Cell { cellColor: "black"; }
+        Cell { cellColor: "red" }
+        Cell { cellColor: "green" }
+        Cell { cellColor: "blue" }
+        Cell { cellColor: "yellow" }
+        Cell { cellColor: "steelblue" }
+        Cell { cellColor: "black" }
 
         Controller.onPressed: {
             console.log("Generic handler", event.type)
