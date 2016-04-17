@@ -132,10 +132,10 @@ void ControllerAttached::sendSpecificEvent(
 
 #define HANDLE_CONTROLLER_EVENT(genericEvent, table)  \
     do {                                              \
-        sendSpecificEvent(table, qcevt);    \
+        sendSpecificEvent(table, qcevt);              \
                                                       \
         if (!qcevt.isAccepted()) {                    \
-            emit genericEvent(&qcevt);                    \
+            emit genericEvent(&qcevt);                \
         }                                             \
                                                       \
         evt->setAccepted(qcevt.isAccepted());         \
