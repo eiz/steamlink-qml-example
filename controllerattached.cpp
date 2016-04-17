@@ -4,7 +4,6 @@
  */
 
 #include <QtGui>
-#include <syslog.h>
 #include "controllerattached.h"
 
 ControllerAttached::ControllerAttached(QObject *parent) :
