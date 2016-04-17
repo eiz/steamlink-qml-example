@@ -90,6 +90,7 @@ static const ControllerSignalName dpadPressedSignals[] =
     { "dpadDownLeftPressed", QControllerEvent::DIRECTION_SW },
     { "dpadLeftPressed", QControllerEvent::DIRECTION_W },
     { "dpadUpLeftPressed", QControllerEvent::DIRECTION_NW },
+    { 0, 0 },
 };
 
 static const char *signalNameForEventType(
