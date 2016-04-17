@@ -49,6 +49,9 @@ Rectangle {
 
         Controller.onButtonAPressed: {
             console.log("Specific handler auto-accepts like Keys")
+            helloText.text = "[A] button pressed."
         }
+
+        Controller.onButtonGuidePressed: Qt.quit()
     }
 }
