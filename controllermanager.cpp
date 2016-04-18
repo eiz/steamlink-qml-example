@@ -191,6 +191,12 @@ void CControllerManager::CheckGameControllers()
         case SDL_QUIT:
             QCoreApplication::quit();
             break;
+        case SDL_JOYBUTTONDOWN:
+        case SDL_JOYBUTTONUP:
+        case SDL_JOYAXISMOTION:
+            break; // ignore these for now.
+        case SDL_JOYHATMOTION:
+            break; // TODO: left touchpad comes through as a hat switch event.
         default:
             qWarning() << "Unhandled SDL event " << event.type;
             break;
@@ -235,7 +241,7 @@ void CControllerManager::OnGameControllerRemoved( int nJoystickID )
 
             for ( int iButton = 0; iButton < SDL_CONTROLLER_BUTTON_MAX; ++iButton )
                 OnGameControllerButton( pController, iButton, false );
-            
+
             m_vecGameControllers.remove( iIndex );
             SDL_GameControllerClose( pController->m_pController );
             delete pController;
@@ -626,9 +632,9 @@ bool CControllerManager::eventFilter( QObject *, QEvent *pEvent )
             }
             return true;
         }
-        else if ( pKeyEvent->key() == Qt::Key_Up || 
-                  pKeyEvent->key() == Qt::Key_Down || 
-                  pKeyEvent->key() == Qt::Key_Left || 
+        else if ( pKeyEvent->key() == Qt::Key_Up ||
+                  pKeyEvent->key() == Qt::Key_Down ||
+                  pKeyEvent->key() == Qt::Key_Left ||
                   pKeyEvent->key() == Qt::Key_Right )
         {
             if ( pKeyEvent->key() == Qt::Key_Up )

@@ -15,17 +15,24 @@ class ControllerSignalName;
 class ControllerAttached : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(int simulatedDpad READ simulatedDpad WRITE setSimulatedDpad)
 
 public:
     explicit ControllerAttached(QObject *parent = 0);
     static void initialize();
     static ControllerAttached *qmlAttachedProperties(QObject *);
+    int simulatedDpad() { return _simulatedDpad; }
+    void setSimulatedDpad(int value) { _simulatedDpad = value; }
 
 private:
     virtual bool eventFilter(QObject *obj, QEvent *evt);
     void sendSpecificEvent(
             const ControllerSignalName *signalTable,
-            QuickControllerEvent& qcevt);
+            QuickControllerEvent& qcevt,
+            int tableValue);
+
+    int _simulatedDpad;
+    QControllerEvent::Direction _lastDpadDirection;
 
 signals:
     void pressed(QuickControllerEvent *event);
@@ -87,12 +94,20 @@ class QuickControllerEvent: public QObject
     Q_PROPERTY(bool accepted READ isAccepted WRITE setAccepted)
 
 public:
-    QuickControllerEvent(): _accepted(false) { }
+    QuickControllerEvent():
+        _accepted(false),
+        _type(QControllerEvent::NONE),
+        _direction(QControllerEvent::DIRECTION_CENTER) { }
     QuickControllerEvent(const QControllerEvent &event):
-        _event(event), _accepted(event.isAccepted()) { }
+        _event(event),
+        _accepted(event.isAccepted()),
+        _type(event.type()),
+        _direction(event.direction()) { }
 
-    int type() const { return _event.type(); }
-    int direction() const { return _event.direction(); }
+    int type() const { return _type; }
+    void setType(QControllerEvent::EventType value) { _type = value; }
+    int direction() const { return _direction; }
+    void setDirection(QControllerEvent::Direction value) { _direction = value; }
     qreal distance() const { return _event.distance(); }
     qreal angle() const { return _event.angle(); }
     bool isAccepted() const { return _accepted; }
@@ -101,6 +116,8 @@ public:
 private:
     QControllerEvent _event;
     bool _accepted;
+    QControllerEvent::EventType _type;
+    QControllerEvent::Direction _direction;
 };
 
 class QuickControllerEventType: public QObject
@@ -123,7 +140,7 @@ public:
         ButtonRightStick,
         ButtonLeftShoulder,
         ButtonRightShoulder,
-        DPad,
+        Dpad,
         LeftThumbstick,
         RightThumbstick,
         LeftTrigger,

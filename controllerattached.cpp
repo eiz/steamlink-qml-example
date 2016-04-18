@@ -9,6 +9,8 @@
 ControllerAttached::ControllerAttached(QObject *parent) :
     QObject(parent)
 {
+    _lastDpadDirection = QControllerEvent::DIRECTION_CENTER;
+    _simulatedDpad = QControllerEvent::NONE;
     parent->installEventFilter(this);
 }
 
@@ -112,10 +114,11 @@ static const char *signalNameForEventType(
 
 void ControllerAttached::sendSpecificEvent(
     const ControllerSignalName *signalTable,
-    QuickControllerEvent& qcevt)
+    QuickControllerEvent& qcevt,
+    int tableValue)
 {
     const char *sigName = signalNameForEventType(
-        signalTable, qcevt.type());
+        signalTable, tableValue);
 
     if (sigName) {
         QString sigNameWithType = sigName;
@@ -135,19 +138,19 @@ void ControllerAttached::sendSpecificEvent(
     }
 }
 
-#define HANDLE_CONTROLLER_EVENT(genericEvent, table)  \
-    do {                                              \
-        sendSpecificEvent(table, qcevt);              \
-                                                      \
-        if (!qcevt.isAccepted()) {                    \
-            emit genericEvent(&qcevt);                \
-        }                                             \
-                                                      \
-        evt->setAccepted(qcevt.isAccepted());         \
-                                                      \
-        if (qcevt.isAccepted()) {                     \
-            return true;                              \
-        }                                             \
+#define HANDLE_CONTROLLER_EVENT(genericEvent, table, value)  \
+    do {                                                     \
+        sendSpecificEvent(table, qcevt, qcevt.value());      \
+                                                             \
+        if (!qcevt.isAccepted()) {                           \
+            emit genericEvent(&qcevt);                       \
+        }                                                    \
+                                                             \
+        evt->setAccepted(qcevt.isAccepted());                \
+                                                             \
+        if (qcevt.isAccepted()) {                            \
+            return true;                                     \
+        }                                                    \
     } while(0)
 
 bool ControllerAttached::eventFilter(QObject *obj, QEvent *evt)
@@ -157,23 +160,51 @@ bool ControllerAttached::eventFilter(QObject *obj, QEvent *evt)
         QuickControllerEvent qcevt(*cevt);
 
         if (cevt->isButtonPress()) {
-            HANDLE_CONTROLLER_EVENT(pressed, pressedSignals);
+            HANDLE_CONTROLLER_EVENT(pressed, pressedSignals, type);
         }
 
         if (cevt->isButtonRelease()) {
-            HANDLE_CONTROLLER_EVENT(released, releasedSignals);
+            HANDLE_CONTROLLER_EVENT(released, releasedSignals, type);
         }
 
         if (cevt->isTrigger()) {
-            HANDLE_CONTROLLER_EVENT(trigger, triggerSignals);
+            HANDLE_CONTROLLER_EVENT(trigger, triggerSignals, type);
         }
 
         if (cevt->isThumbstick()) {
-            HANDLE_CONTROLLER_EVENT(stick, stickSignals);
+            HANDLE_CONTROLLER_EVENT(stick, stickSignals, type);
+
+            if (_simulatedDpad == cevt->type()) {
+                QControllerEvent::Direction currentDirection =
+                    QControllerEvent::DIRECTION_CENTER;
+                float degrees = qRadiansToDegrees(cevt->angle());
+
+                if (degrees <= 45 || degrees > 315) {
+                    currentDirection = QControllerEvent::DIRECTION_N;
+                } else if (degrees > 45 && degrees <= 135) {
+                    currentDirection = QControllerEvent::DIRECTION_E;
+                } else if (degrees > 135 && degrees <= 225) {
+                    currentDirection = QControllerEvent::DIRECTION_S;
+                } else if (degrees > 225 && degrees < 315) {
+                    currentDirection = QControllerEvent::DIRECTION_W;
+                }
+
+                if (cevt->distance() == 0) {
+                    currentDirection = QControllerEvent::DIRECTION_CENTER;
+                }
+
+                if (_lastDpadDirection != currentDirection) {
+                    _lastDpadDirection = currentDirection;
+                    qcevt.setType(QControllerEvent::DPAD);
+                    qcevt.setDirection(currentDirection);
+                    HANDLE_CONTROLLER_EVENT(
+                        dpad, dpadPressedSignals, direction);
+                }
+            }
         }
 
         if (cevt->isDPad()) {
-            HANDLE_CONTROLLER_EVENT(dpad, dpadPressedSignals);
+            HANDLE_CONTROLLER_EVENT(dpad, dpadPressedSignals, direction);
         }
     }
 
